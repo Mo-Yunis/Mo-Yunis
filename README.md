@@ -19,7 +19,7 @@
 ```dart
 // 📱 Who am I?
 class Developer {
-  final String name     = "Mo-Yunis";
+  final String name     = "Mohammed Yunis";
   final String role     = "Flutter Developer 📱";
   final String location = "Bilbeis, Sharqia — Egypt 🇪🇬";
   final String focus    = "Cross-platform mobile apps with Flutter & Dart";
