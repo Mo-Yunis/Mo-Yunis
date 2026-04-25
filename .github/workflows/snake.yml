@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: "0 */12 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write  # ← This was missing!
+
 jobs:
   generate:
     runs-on: ubuntu-latest
@@ -14,7 +18,8 @@ jobs:
           outputs: |
             dist/github-snake.svg
             dist/github-snake-dark.svg?palette=github-dark
-      - uses: crazy-max/ghaction-github-pages@v3.1.0
+
+      - uses: crazy-max/ghaction-github-pages@v4  # ← upgraded from v3.1.0
         with:
           target_branch: output
           build_dir: dist
