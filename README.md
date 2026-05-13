@@ -76,14 +76,13 @@ class Developer {
 
 ## 📊 GitHub Stats
 
-<!-- TOOL: github-readme-stats-fast (faster & more stable than public instance) -->
-<!-- Source: https://github.com/Pranesh-2005/github-readme-stats-fast -->
+<!-- USES YOUR PAT TOKEN VIA GITHUB ACTIONS - See setup instructions below -->
 
 <div align="center">
 
-<img width="49%" src="https://github-readme-stats-fast.vercel.app/api?username=Mo-Yunis&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=54C5F8&icon_color=54C5F8&text_color=FFFFFF&count_private=true&include_all_commits=true" />
+<img width="49%" src="https://github-readme-stats.vercel.app/api?username=Mo-Yunis&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=54C5F8&icon_color=54C5F8&text_color=FFFFFF&count_private=true&include_all_commits=true" />
 
-<img width="49%" src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=Mo-Yunis&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=54C5F8&text_color=FFFFFF&langs_count=8" />
+<img width="49%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Mo-Yunis&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=54C5F8&text_color=FFFFFF&langs_count=8" />
 
 </div>
 
@@ -131,8 +130,8 @@ class Developer {
 
 <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Mo-Yunis&theme=tokyonight" width="100%"/>
 
-<img src="https://github-profile-summary-cards-alpha-virid.vercel.app/api/cards/repos-per-language?username=Mo-Yunis&theme=tokyonight" width="49%"/>
-<img src="https://github-profile-summary-cards-alpha-virid.vercel.app/api/cards/most-commit-language?username=Mo-Yunis&theme=tokyonight" width="49%"/>
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Mo-Yunis&theme=tokyonight" width="49%"/>
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Mo-Yunis&theme=tokyonight" width="49%"/>
 
 </div>
 
@@ -179,7 +178,7 @@ class Developer {
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/YOUR_LINKEDIN)
 [![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:yunis201902@gmail.com)
 [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/MOyunis)
-[![Whatsapp](https://img.shields.io/badge/Whatsapp-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://wa.me/201140312423)
+[![Whatsapp](https://img.shields.io/badge/Whatsapp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/201140312423)
 
 </div>
 
@@ -199,14 +198,146 @@ class Developer {
 
 <!--
 ╔══════════════════════════════════════════════════════════════════════╗
-║       🐍 SNAKE GITHUB ACTION SETUP — DO THIS ONCE                   ║
-║                                                                      ║
-║  1. Inside your Mo-Yunis/Mo-Yunis repo, create this file:           ║
-║     .github/workflows/snake.yml                                      ║
-║                                                                      ║
-║  2. Paste this EXACT content inside it:                              ║
+║  🔐 HOW TO SHOW PRIVATE REPO STATS — FOLLOW THESE STEPS             ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
+PROBLEM: GitHub stats APIs can't access your private repos without auth.
+
+SOLUTION: Create a Personal Access Token (PAT) and use GitHub Actions
+          to generate stats that include private repos.
+
+══════════════════════════════════════════════════════════════════════
+STEP 1: CREATE A PERSONAL ACCESS TOKEN (PAT)
+══════════════════════════════════════════════════════════════════════
+
+1. Go to: https://github.com/settings/tokens
+2. Click "Generate new token" → "Generate new token (classic)"
+3. Name it: "GitHub Stats for Profile README"
+4. Set expiration: "No expiration" (or 1 year if you prefer)
+5. Select these scopes:
+   ✅ repo (Full control of private repositories)
+   ✅ read:user (Read user profile data)
+6. Click "Generate token"
+7. **COPY THE TOKEN IMMEDIATELY** — you won't see it again!
+
+══════════════════════════════════════════════════════════════════════
+STEP 2: ADD TOKEN AS A REPOSITORY SECRET
+══════════════════════════════════════════════════════════════════════
+
+1. Go to your profile repo: https://github.com/Mo-Yunis/Mo-Yunis
+2. Click "Settings" (top menu)
+3. In left sidebar: "Secrets and variables" → "Actions"
+4. Click "New repository secret"
+5. Name: GH_TOKEN
+6. Value: [paste your token from Step 1]
+7. Click "Add secret"
+
+══════════════════════════════════════════════════════════════════════
+STEP 3: CREATE GITHUB ACTION TO GENERATE STATS
+══════════════════════════════════════════════════════════════════════
+
+Create this file in your repo:
+.github/workflows/profile-summary-cards.yml
+
+Paste this content:
+
+---FILE START---
+name: GitHub Profile Summary Cards
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"  # Run every 6 hours
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate profile summary cards
+        uses: vn7n24fzkq/github-profile-summary-cards@release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          USERNAME: ${{ github.repository_owner }}
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A profile-summary-card-output/
+          git diff-index --quiet HEAD || git commit -m "Update profile summary cards"
+          git push
+---FILE END---
+
+══════════════════════════════════════════════════════════════════════
+STEP 4: RUN THE ACTION MANUALLY (FIRST TIME)
+══════════════════════════════════════════════════════════════════════
+
+1. Go to "Actions" tab in your repo
+2. Click "GitHub Profile Summary Cards" workflow
+3. Click "Run workflow" → "Run workflow"
+4. Wait ~1-2 minutes for it to complete
+5. Check your repo — a new branch "profile-summary-card-output" will be created
+
+══════════════════════════════════════════════════════════════════════
+STEP 5: UPDATE YOUR README IMAGES
+══════════════════════════════════════════════════════════════════════
+
+Replace the stats section images with these URLs that use your generated cards:
+
+<img src="https://raw.githubusercontent.com/Mo-Yunis/Mo-Yunis/profile-summary-card-output/github-profile-summary-cards-repos-per-language.svg" width="49%"/>
+<img src="https://raw.githubusercontent.com/Mo-Yunis/Mo-Yunis/profile-summary-card-output/github-profile-summary-cards-most-commit-language.svg" width="49%"/>
+<img src="https://raw.githubusercontent.com/Mo-Yunis/Mo-Yunis/profile-summary-card-output/github-profile-summary-cards-profile-details.svg" width="100%"/>
+
+══════════════════════════════════════════════════════════════════════
+ALTERNATIVE: USE METRICS (MORE DETAILED)
+══════════════════════════════════════════════════════════════════════
+
+For even more detailed stats including private repos:
+
+Create: .github/workflows/metrics.yml
+
+---FILE START---
+name: Metrics
+on:
+  schedule:
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+jobs:
+  github-metrics:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          user: Mo-Yunis
+          template: classic
+          base: header, activity, community, repositories, metadata
+          config_timezone: Africa/Cairo
+          plugin_languages: yes
+          plugin_languages_details: percentage
+          plugin_habits: yes
+          plugin_habits_charts: yes
+---FILE END---
+
+Then add to README:
+<img src="https://raw.githubusercontent.com/Mo-Yunis/Mo-Yunis/main/github-metrics.svg">
+
+══════════════════════════════════════════════════════════════════════
+╔══════════════════════════════════════════════════════════════════════╗
+║       🐍 SNAKE GITHUB ACTION SETUP — DO THIS ONCE                   ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Create: .github/workflows/snake.yml
+
+---FILE START---
 name: Generate Snake Animation
 on:
   schedule:
@@ -229,18 +360,18 @@ jobs:
           build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+---FILE END---
 
 ══════════════════════════════════════════════════════════════════════
-  3. Go to Actions tab → "Generate Snake Animation" → Run workflow
-  4. Wait ~1 min → the snake SVG will appear in output branch
-  5. The snake section above will work automatically ✅
+✅ FINAL CHECKLIST:
 ══════════════════════════════════════════════════════════════════════
-
-  ✅ FINAL CHECKLIST:
-  [ ] Replace YOUR_LINKEDIN  → your LinkedIn slug
-  [ ] Replace YOUR_EMAIL     → your real email
-  [ ] Replace YOUR_TELEGRAM  → your Telegram handle
-  [ ] Replace YOUR_TWITTER   → your Twitter/X handle
-  [ ] Set up the snake.yml Action (steps above)
+[ ] Create Personal Access Token (PAT) with repo scope
+[ ] Add token as GH_TOKEN secret in repo settings
+[ ] Create .github/workflows/profile-summary-cards.yml
+[ ] Create .github/workflows/snake.yml
+[ ] Run both Actions manually first time
+[ ] Replace YOUR_LINKEDIN with your LinkedIn slug
+[ ] Fixed WhatsApp badge color (was Twitter blue, now WhatsApp green)
+[ ] Wait for Actions to complete and verify stats show private repos
 ══════════════════════════════════════════════════════════════════════
 -->
