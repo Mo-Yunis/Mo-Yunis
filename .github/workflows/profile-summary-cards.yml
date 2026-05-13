@@ -1,0 +1,30 @@
+name: GitHub Profile Summary Cards
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"  # Run every 6 hours
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate profile summary cards
+        uses: vn7n24fzkq/github-profile-summary-cards@release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          USERNAME: ${{ github.repository_owner }}
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A profile-summary-card-output/
+          git diff-index --quiet HEAD || git commit -m "Update profile summary cards"
+          git push
