@@ -52,3 +52,13 @@
 ```
 
     
+
+---
+
+![](./4-productive-time.svg)
+
+```
+![](https://raw.githubusercontent.com/Mo-Yunis/Mo-Yunis/main/profile-summary-card-output/moltack/4-productive-time.svg)
+```
+
+    
